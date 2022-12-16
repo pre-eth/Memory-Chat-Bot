@@ -11,21 +11,25 @@ class ChatBot
 {
 private:
     // data handles (owned)
-    wxBitmap *_image{NULL}; // avatar image
+    wxBitmap *image{NULL}; // avatar image
 
     // data handles (not owned)
-    GraphNode *_currentNode{nullptr};
-    GraphNode *_rootNode{nullptr};
-    ChatLogic *_chatLogic{nullptr};
+    GraphNode *currentNode{nullptr};
+    GraphNode *rootNode{nullptr};
+    ChatLogic *chatLogic{nullptr};
 
     // proprietary functions
     int ComputeLevenshteinDistance(std::string s1, std::string s2);
 
 public:
-    // constructors / destructors
     ChatBot();                     // constructor WITHOUT memory allocation
     ChatBot(std::string filename); // constructor WITH memory allocation
     ~ChatBot();
+
+    ChatBot(const ChatBot& src);                // COPY CTOR
+    ChatBot& operator=(const ChatBot& src);     // COPY ASSIGN CTOR 
+    ChatBot(ChatBot&& src);                     // MOVE CTOR
+    ChatBot& operator=(ChatBot&& src);          // MOVE ASSIGN
 
     //// STUDENT CODE
     ////
@@ -35,10 +39,9 @@ public:
 
     // getters / setters
     void SetCurrentNode(GraphNode *node);
-    void SetRootNode(GraphNode *rootNode) { _rootNode = rootNode; }
-    void SetChatLogicHandle(ChatLogic *chatLogic) { _chatLogic = chatLogic; }
-    ChatLogic* GetChatLogicHandle() { return _chatLogic; }
-    wxBitmap *GetImageHandle() { return _image; }
+    void SetRootNode(GraphNode *rNode) { rootNode = rNode; }
+    void SetChatLogicHandle(ChatLogic *cLogic) { chatLogic = cLogic; }
+    wxBitmap *GetImageHandle() { return image; }
 
     // communication
     void ReceiveMessageFromUser(std::string message);
