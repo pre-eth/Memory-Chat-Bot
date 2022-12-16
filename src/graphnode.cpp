@@ -2,38 +2,38 @@
 #include "graphnode.h"
 
 void GraphNode::AddToken(std::string token) {
-    _answers.push_back(token);
+    answers.push_back(token);
 }
 
 void GraphNode::AddEdgeToParentNode(GraphEdge *edge) {
-    _parentEdges.push_back(edge);
+    parentEdges.push_back(edge);
 }
 
-void GraphNode::AddEdgeToChildNode(GraphEdge *edge) {
-    _childEdges.push_back(edge);
+void GraphNode::AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge) {
+    childEdges.push_back(std::move(edge));
 }
 
 //// STUDENT CODE
 ////
 void GraphNode::MoveChatbotHere(ChatBot *chatbot) {
-    _chatBot = chatbot;
-    _chatBot->SetCurrentNode(this);
+    chatBot = chatbot;
+    chatBot->SetCurrentNode(this);
 }
 
 void GraphNode::MoveChatbotToNewNode(GraphNode *newNode)
 {
-    newNode->MoveChatbotHere(_chatBot);
-    _chatBot = nullptr; // invalidate pointer at source
+    newNode->MoveChatbotHere(chatBot);
+    chatBot = nullptr; // invalidate pointer at source
 }
 ////
 //// EOF STUDENT CODE
 
-GraphEdge *GraphNode::GetChildEdgeAtIndex(int index)
+GraphEdge* GraphNode::GetChildEdgeAtIndex(int index)
 {
     //// STUDENT CODE
     ////
 
-    return _childEdges[index];
+    return childEdges[index].get();
 
     ////
     //// EOF STUDENT CODE
