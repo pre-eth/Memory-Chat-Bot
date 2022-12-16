@@ -31,8 +31,7 @@ private:
 
 public:
     // constructor / destructor
-    GraphNode(int id);
-    ~GraphNode();
+    GraphNode(int id) : _id(id) { _chatBot = nullptr; };
 
     // getter / setter
     int GetID() { return _id; }

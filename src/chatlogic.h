@@ -17,15 +17,15 @@ private:
     ////
 
     // data handles (owned)
-    std::vector<GraphNode *> _nodes;
-    std::vector<GraphEdge *> _edges;
+    std::vector<GraphNode *> nodes;
+    std::vector<GraphEdge *> edges;
 
     ////
     //// EOF STUDENT CODE
 
     // data handles (not owned)
     GraphNode *_currentNode;
-    ChatBot *_chatBot;
+    ChatBot *chatBot;
     ChatBotPanelDialog *_panelDialog;
 
     // proprietary type definitions
