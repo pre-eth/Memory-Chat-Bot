@@ -23,9 +23,6 @@ ChatLogic::ChatLogic() {
 ChatLogic::~ChatLogic() {
     delete chatBot;
 
-    for (auto n: nodes)
-        delete n;
-
     for (auto e : edges)
         delete e;
 }
@@ -89,23 +86,17 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
 
                     // node-based processing
                     if (type->second == "NODE") {
-                        //// STUDENT CODE
-                        ////
-
                         // check if node with this ID exists already
-                        auto newNode = std::find_if(nodes.begin(), nodes.end(), [&id](GraphNode *node) { return node->GetID() == id; });
+                        auto newNode = std::find_if(nodes.begin(), nodes.end(), [&id](std::unique_ptr<GraphNode>& node) { return node->GetID() == id; });
 
                         // create new element if ID does not yet exist
                         if (newNode == nodes.end()) {
-                            nodes.emplace_back(new GraphNode(id));
+                            nodes.emplace_back(std::make_unique<GraphNode>(id));
                             newNode = nodes.end() - 1; // get iterator to last element
 
                             // add all answers to current node
                             AddAllTokensToElement("ANSWER", tokens, **newNode);
                         }
-
-                        ////
-                        //// EOF STUDENT CODE
                     }
 
                     // edge-based processing
@@ -119,21 +110,23 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
 
                         if (parentToken != tokens.end() && childToken != tokens.end()) {
                             // get iterator on incoming and outgoing node via ID search
-                            auto parentNode = std::find_if(nodes.begin(), nodes.end(), [&parentToken](GraphNode *node) { return node->GetID() == std::stoi(parentToken->second); });
-                            auto childNode = std::find_if(nodes.begin(), nodes.end(), [&childToken](GraphNode *node) { return node->GetID() == std::stoi(childToken->second); });
+                            auto parentNode = std::find_if(nodes.begin(), nodes.end(), [&parentToken](std::unique_ptr<GraphNode>& node) 
+                                { return node->GetID() == std::stoi(parentToken->second); });
+                            auto childNode = std::find_if(nodes.begin(), nodes.end(), [&childToken](std::unique_ptr<GraphNode>& node) 
+                                { return node->GetID() == std::stoi(childToken->second); });
 
                             // create new edge
-                            GraphEdge *edge = new GraphEdge(id);
-                            edge->SetChildNode(*childNode);
-                            edge->SetParentNode(*parentNode);
+                            GraphEdge* edge = new GraphEdge(id);
+                            edge->SetChildNode(childNode->get());
+                            edge->SetParentNode(parentNode->get());
                             edges.push_back(edge);
 
                             // find all keywords for current node
                             AddAllTokensToElement("KEYWORD", tokens, *edge);
 
                             // store reference in child node and parent node
-                            (*childNode)->AddEdgeToParentNode(edge);
-                            (*parentNode)->AddEdgeToChildNode(edge);
+                            childNode->get()->AddEdgeToParentNode(edge);
+                            parentNode->get()->AddEdgeToChildNode(edge);
                         }
 
                         ////
@@ -144,7 +137,6 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
                     std::cout << "Error: ID missing. Line is ignored!\n";
             }
         } // eof loop over all lines in the file
-
         file.close();
 
     } // eof check for file availability
@@ -160,10 +152,10 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
     GraphNode *rootNode = nullptr;
     for (auto it = std::begin(nodes); it != std::end(nodes); ++it) {
         // search for nodes which have no incoming edges
-        if ((*it)->GetNumberOfParents() == 0) {
+        if (it->get()->GetNumberOfParents() == 0) {
 
             if (rootNode == nullptr)
-                rootNode = *it; // assign current node to root
+                rootNode = it->get(); // assign current node to root
             else
                 std::cout << "ERROR : Multiple root nodes detected\n";
         }

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "chatgui.h"
 
 // forward declarations
@@ -12,43 +13,37 @@ class GraphNode;
 
 class ChatLogic
 {
-private:
-    //// STUDENT CODE
-    ////
+    private:
 
-    // data handles (owned)
-    std::vector<GraphNode *> nodes;
-    std::vector<GraphEdge *> edges;
+        // data handles (owned)
+        std::vector<std::unique_ptr<GraphNode>> nodes;
+        std::vector<GraphEdge*> edges;
 
-    ////
-    //// EOF STUDENT CODE
+        // data handles (not owned)
+        GraphNode *_currentNode;
+        ChatBot *chatBot;
+        ChatBotPanelDialog *_panelDialog;
 
-    // data handles (not owned)
-    GraphNode *_currentNode;
-    ChatBot *chatBot;
-    ChatBotPanelDialog *_panelDialog;
+        // proprietary type definitions
+        typedef std::vector<std::pair<std::string, std::string>> tokenlist;
 
-    // proprietary type definitions
-    typedef std::vector<std::pair<std::string, std::string>> tokenlist;
+        // proprietary functions
+        template <typename T>
+        void AddAllTokensToElement(std::string tokenID, tokenlist &tokens, T &element);
 
-    // proprietary functions
-    template <typename T>
-    void AddAllTokensToElement(std::string tokenID, tokenlist &tokens, T &element);
+    public:
+        // constructor / destructor
+        ChatLogic();
+        ~ChatLogic();
 
-public:
-    // constructor / destructor
-    ChatLogic();
-    ~ChatLogic();
+        // getter / setter
+        void SetPanelDialogHandle(ChatBotPanelDialog* panelDialog);
+        void SetChatbotHandle(ChatBot* chatbot);
 
-    // getter / setter
-    void SetPanelDialogHandle(ChatBotPanelDialog *panelDialog);
-    void SetChatbotHandle(ChatBot *chatbot);
-
-    // proprietary functions
-    void LoadAnswerGraphFromFile(std::string filename);
-    void SendMessageToChatbot(std::string message);
-    void SendMessageToUser(std::string message);
-    wxBitmap *GetImageFromChatbot();
+        // proprietary functions
+        void LoadAnswerGraphFromFile(std::string filename);
+        void SendMessageToChatbot(std::string message);
+        void SendMessageToUser(std::string message);
+        wxBitmap *GetImageFromChatbot();
 };
-
 #endif /* CHATLOGIC_H_ */
