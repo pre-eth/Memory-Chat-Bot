@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include "graphnode.h"
+
 class GraphNode; // forward declaration
 
 class GraphEdge
@@ -23,13 +25,13 @@ class GraphEdge
 
         // getter / setter
         int GetID() { return _id; }
-        void SetChildNode(GraphNode* childNode);
-        void SetParentNode(GraphNode* parentNode);
+        void SetChildNode(GraphNode* childNode) { _childNode = childNode; };
+        void SetParentNode(GraphNode* parentNode) { _parentNode = parentNode; };
         GraphNode *GetChildNode() { return _childNode; }
         std::vector<std::string> GetKeywords() { return _keywords; }
 
         // proprietary functions
-        void AddToken(std::string token);
+        void AddToken(std::string token) { _keywords.push_back(token); };
 };
 
 #endif /* GRAPHEDGE_H_ */

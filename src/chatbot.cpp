@@ -24,7 +24,7 @@ ChatBot::~ChatBot() {
 }
 
 ChatBot::ChatBot(const ChatBot& src) : 
-currentNode(src.currentNode), chatLogic(src.chatLogic), rootNode(src.rootNode) {
+    currentNode(src.currentNode), chatLogic(src.chatLogic), rootNode(src.rootNode) {
     std::cout << "ChatBot Copy Constructor\n";
 
     image = new wxBitmap(*src.image);
@@ -124,6 +124,7 @@ void ChatBot::SetCurrentNode(GraphNode *node) {
     std::string answer = answers.at(dis(generator));
 
     // send selected node answer to user
+    chatLogic->SetChatbotHandle(this);
     chatLogic->SendMessageToUser(answer);
 }
 

@@ -8,7 +8,7 @@ The ChatBot code creates a dialogue where users can ask questions about some asp
 
 The program already worked as intended, but no advanced concepts discussed in the Memory Management course have been used; there were no smart pointers or move semantics, and not much thought was given to ownership or memory allocation.
 
-The goal was to use my new detailed knowledge of C++'s Memory Model to optimize the memory usage of the ChatBot program. I had to complete the 5 tasks described below:
+The goal was to use my new detailed knowledge of C++'s Memory Model to optimize the memory usage of the ChatBot program. I had to complete the 6 tasks described below:
 
 ## Dependencies for Running Locally
 * cmake >= 3.11
@@ -30,12 +30,11 @@ The goal was to use my new detailed knowledge of C++'s Memory Model to optimize 
 
 1. Clone this repo.
 2. Make a build directory in the top level directory: `mkdir build && cd build`
-3. Compile: `cmake .. && make`
-4. Run it: `./membot`.
+3. Compile: `cmake .. && make && ./membot`
 
 ## Project Task Details
 
-These were the task descriptions provided by Udacity. My commits have my thought process and responses to the questions and prompts presented here.
+These were the task descriptions provided by Udacity.
 
 ### WARMUP TASK
 

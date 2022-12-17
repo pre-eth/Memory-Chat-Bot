@@ -11,19 +11,6 @@
 #include "chatbot.h"
 #include "chatlogic.h"
 
-
-ChatLogic::ChatLogic() {
-    // create instance of chatbot
-    chatBot = new ChatBot("../images/chatbot.png");
-
-    // add pointer to chatlogic so that chatbot answers can be passed on to the GUI
-    chatBot->SetChatLogicHandle(this);
-}
-
-ChatLogic::~ChatLogic() {
-    delete chatBot;
-}
-
 template <typename T>
 void ChatLogic::AddAllTokensToElement(std::string tokenID, tokenlist &tokens, T &element) {
     // find all occurences for current node
@@ -110,17 +97,16 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
                                 { return node->GetID() == std::stoi(childToken->second); });
 
                             // create new edge
-                            edges.emplace_back(std::make_unique<GraphEdge>(id));
-                            GraphEdge* edge = edges.back().get();
-                            edge->SetChildNode(childNode->get());
+                            auto edge = std::make_unique<GraphEdge>(id);
                             edge->SetParentNode(parentNode->get());
+                            edge->SetChildNode(childNode->get());
 
                             // find all keywords for current node
                             AddAllTokensToElement("KEYWORD", tokens, *edge);
 
                             // store reference in child node and parent node
-                            childNode->get()->AddEdgeToParentNode(edge);
-                            parentNode->get()->AddEdgeToChildNode(std::move(edges.back()));
+                            childNode->get()->AddEdgeToParentNode(edge.get());
+                            parentNode->get()->AddEdgeToChildNode(std::move(edge));
                         }
                     }
                 }
@@ -143,7 +129,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
     GraphNode *rootNode = nullptr;
     for (auto it = std::begin(nodes); it != std::end(nodes); ++it) {
         // search for nodes which have no incoming edges
-        if (it->get()->GetNumberOfParents() == 0) {
+        if ((*it)->GetNumberOfParents() == 0) {
 
             if (rootNode == nullptr)
                 rootNode = it->get(); // assign current node to root
@@ -151,20 +137,18 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
                 std::cout << "ERROR : Multiple root nodes detected\n";
         }
     }
-
-    // add chatbot to graph root node
-    chatBot->SetRootNode(rootNode);
-    rootNode->MoveChatbotHere(chatBot);
-    
-    ////
-    //// EOF STUDENT CODE
+    ChatBot chatBot("../images/chatbot.png");
+    SetChatbotHandle(&chatBot);
+    chatBot.SetChatLogicHandle(this);
+    chatBot.SetRootNode(rootNode);
+    rootNode->MoveChatbotHere(std::move(chatBot));
 }
 
-void ChatLogic::SetPanelDialogHandle(ChatBotPanelDialog *panelDialog) {
-    _panelDialog = panelDialog;
+void ChatLogic::SetPanelDialogHandle(ChatBotPanelDialog *pd) {
+    panelDialog = pd;
 }
 
-void ChatLogic::SetChatbotHandle(ChatBot *chatbot) {
+void ChatLogic::SetChatbotHandle(ChatBot* chatbot) {
     chatBot = chatbot;
 }
 
@@ -173,7 +157,7 @@ void ChatLogic::SendMessageToChatbot(std::string message) {
 }
 
 void ChatLogic::SendMessageToUser(std::string message) {
-    _panelDialog->PrintChatbotResponse(message);
+    panelDialog->PrintChatbotResponse(message);
 }
 
 wxBitmap *ChatLogic::GetImageFromChatbot() {

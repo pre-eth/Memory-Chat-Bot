@@ -3,18 +3,20 @@
 #include <wx/image.h>
 #include <string>
 #include "chatbot.h"
-#include "chatlogic.h"
 #include "chatgui.h"
+#include "graphnode.h"
+#include "graphedge.h"
+#include "chatlogic.h"
 
 // size of chatbot window
 const int width = 414;
 const int height = 736;
 
+std::string dataPath{"../"};
+std::string imgBasePath{dataPath + "images/"};
+
 // wxWidgets APP
 IMPLEMENT_APP(ChatBotApp);
-
-std::string dataPath = "../";
-std::string imgBasePath = dataPath + "images/";
 
 bool ChatBotApp::OnInit()
 {
@@ -96,7 +98,7 @@ BEGIN_EVENT_TABLE(ChatBotPanelDialog, wxPanel)
 EVT_PAINT(ChatBotPanelDialog::paintEvent) // catch paint events
 END_EVENT_TABLE()
 
-ChatBotPanelDialog::ChatBotPanelDialog(wxWindow *parent, wxWindowID id)
+ChatBotPanelDialog::ChatBotPanelDialog(wxWindow *parent, wxWindowID id)    
     : wxScrolledWindow(parent, id) {
     // sizer will take care of determining the needed scroll size
     _dialogSizer = new wxBoxSizer(wxVERTICAL);
@@ -112,8 +114,8 @@ ChatBotPanelDialog::ChatBotPanelDialog(wxWindow *parent, wxWindowID id)
     chatLogic->SetPanelDialogHandle(this);
 
     // load answer graph from file
-    chatLogic->LoadAnswerGraphFromFile(dataPath + "src/answergraph.txt");
-}
+    chatLogic->LoadAnswerGraphFromFile("../src/answergraph.txt");
+};
 
 void ChatBotPanelDialog::AddDialogItem(wxString text, bool isFromUser) {
     // add a single dialog element to the sizer
